@@ -123,8 +123,39 @@ if __name__ == "__main__":
 	yellow_mask = cv2.inRange(hsv, lower_yellow, upper_yellow) # Threshold the HSV image to get only yellow colors
 	# opening_y = cv2.morphologyEx(yellow_mask, cv2.MORPH_OPEN, kernel, iterations = 2) #Use morphology open to rid ...
 	opening_y = cv2.morphologyEx(yellow_mask, cv2.MORPH_OPEN, kernel, iterations = 2) #Use morphology open to rid ...
-	print(len(yellow_mask))
+	# print(len(yellow_mask))  # All px belong to cubes
 
-	cv2.imshow('opening_y', opening_y)
+	# cv2.imshow('opening_y', opening_y)
+
+# copy from ROI
+	ctrs = cv2.findContours(opening_y.copy(), cv2.RETR_EXTERNAL,
+	cv2.CHAIN_APPROX_SIMPLE)
+	ctrs = imutils.grab_contours(ctrs)
+	(ctrs, _) = contours.sort_contours(ctrs)
+	# print(ctrs)
+
+	sorted_ctrs = sorted(ctrs, key=lambda ctr: cv2.boundingRect(ctr)[1])
+	print(sorted_ctrs)
+
+	numb_of_window = 0
+	for i, ctr in enumerate(sorted_ctrs):
+		# Get bounding box
+		x, y, w, h = cv2.boundingRect(ctr)
+
+		# Getting ROI
+		roi = frame[y:y + h, x:x + w]
+
+		# show ROI
+		numb_of_window = numb_of_window + 1
+		cv2.imshow('Region of Interest' + str(numb_of_window),roi)
+
+		# cv2.waitKey(0) # for single img test
+
+		cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+		# print(i)
+		# print(ctr)
+	cv2.imshow('marked areas', frame)
+
+# copy from ROI
 
 	cv2.waitKey(0) # for single img test
