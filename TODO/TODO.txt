@@ -1,0 +1,5 @@
+
+1) pyserial send coord list according to ino file structure
+2) Gui picture
+3) Get the color value according to real time video
+4) coordinates correction according to robot pos and specs
